@@ -1,7 +1,6 @@
 ##ExpressMaintenance
 
-This is a fork off the CodePlex project ExpressMaint. The CodePlex project hasn't been updated in a few years so I've forked and will am releasing it for the
-world to hack on and improve!
+This is a fork off the CodePlex project ExpressMaint. The CodePlex project hasn't been updated in a few years so I've forked the project and am releasing it for the world to hack on and improve!
 
 Original project - https://expressmaint.codeplex.com/
 
