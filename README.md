@@ -6,11 +6,10 @@ Also added a static copy of the original web page describing process and usage.
 
 Original project - SQLDBAtips.com.  Code from  https://expressmaint.codeplex.com/
 
-Binary files available in the BIN folder.
+Binary files available in the 1-1 ZIP folder. extract to working folder.
+my usage to ensure log files truncated.  
+w:
+cd\sqlbackups
+expressmaint.exe -S (local) -D ALL_USER -T LOG -R w:\sqlbackups -RU WEEKS -RV 3 -B w:\sqlbackups -BU DAYS -BV 2  -V -C
 
-###To Do
-
-* Convert to C# (why? I like using C# and know it better than VB.NET)
-
-* GUI interface for those scared of CLI. :)
 
