@@ -6,6 +6,8 @@ Also added a static copy of the original web page describing process and usage.
 
 Original project - SQLDBAtips.com.  Code from  https://expressmaint.codeplex.com/
 
+Binary files available in the BIN folder.
+
 ###To Do
 
 * Convert to C# (why? I like using C# and know it better than VB.NET)
