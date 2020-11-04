@@ -1,6 +1,14 @@
 ﻿Option Explicit On
 Option Strict On
+'------------------------------------------------------------
+'Author: Jasper Smith , sqldbatips ,  August 2004
+'published on CodePlex.  https://archive.codeplex.com/?p=expressmaint
+'see InitialAuthor.html
+'
 
+'compiled & modifed by Rob Gray using VB.Net 2017, .Net4.6  using nuget SqlServer SMO libraies.
+'tested working SQLServer-Express2016 on Server2019
+'==================================================================
 #Region "Imports"
 
 Imports Microsoft.SqlServer.Management.Common
@@ -61,27 +69,28 @@ Module ExpressMaint
 
     Dim currentDomain As AppDomain = AppDomain.CurrentDomain
     Dim Version As String = My.Application.Info.Version.ToString()
-    Dim Usage As String = vbCrLf & "ExpressMaint utility v" & Version & vbCrLf & _
-                        "Created by Jasper Smith (www.sqldbatips.com)" & vbCrLf & _
-                        " " & vbCrLf & _
-                        "Usage:" & vbCrLf & _
-                        "[-?] " & vbTab & "Show help" & vbCrLf & _
-                        "[-S] " & vbTab & "SQL Server Name" & vbCrLf & _
-                        "[-U] " & vbTab & "SQL Server Login" & vbCrLf & _
-                        "[-P] " & vbTab & "SQL Server Password" & vbCrLf & _
-                        "[-D] " & vbTab & "Database Name or " & ALL_USER & "," & ALL_SYSTEM & "," & ALL & vbCrLf & _
-                        "[-T] " & vbTab & "Type of operation. Can be DB,DIF,LOG,CHECKDB,REORG,REINDEX,STATS,STATSFULL" & vbCrLf & _
-                        "[-B] " & vbTab & "Base backup folder path" & vbCrLf & _
-                        "[-R] " & vbTab & "Report folder path" & vbCrLf & _
-                        "[-BU]" & vbTab & "Backup retention time unit. Can be MINUTES,HOURS,DAYS,WEEKS" & vbCrLf & _
-                        "[-BV]" & vbTab & "Backup retention value" & vbCrLf & _
-                        "[-RU]" & vbTab & "Report retention time unit. Can be MINUTES,HOURS,DAYS,WEEKS" & vbCrLf & _
-                        "[-RV]" & vbTab & "Report retention value" & vbCrLf & _
-                        "[-V] " & vbTab & "Verify backup" & vbCrLf & _
-                        "[-A] " & vbTab & "Check archive attribute on file before deleting" & vbCrLf & _
-                        "[-DS]" & vbTab & "Add the timestamp for files at the start of the filename" & vbCrLf & _
-                        "[-TO]" & vbTab & "Query Timeout in minutes (Default:10)" & vbCrLf & _
-                        "[-C] " & vbTab & "Continue multiple database operation if one or more fails" & vbCrLf & _
+    Dim Usage As String = vbCrLf & "ExpressMaint utility v" & Version & vbCrLf &
+                        "Created by Jasper Smith (www.sqldbatips.com)" & vbCrLf &
+                        "recompiled for SQL2012 + .net4.6.2  RRG" & vbCrLf &
+                        " " & vbCrLf &
+                        "Usage:" & vbCrLf &
+                        "[-?] " & vbTab & "Show help" & vbCrLf &
+                        "[-S] " & vbTab & "SQL Server Name" & vbCrLf &
+                        "[-U] " & vbTab & "SQL Server Login" & vbCrLf &
+                        "[-P] " & vbTab & "SQL Server Password" & vbCrLf &
+                        "[-D] " & vbTab & "Database Name or " & ALL_USER & "," & ALL_SYSTEM & "," & ALL & vbCrLf &
+                        "[-T] " & vbTab & "Type of operation. Can be DB,DIF,LOG,CHECKDB,REORG,REINDEX,STATS,STATSFULL" & vbCrLf &
+                        "[-B] " & vbTab & "Base backup folder path" & vbCrLf &
+                        "[-R] " & vbTab & "Report folder path" & vbCrLf &
+                        "[-BU]" & vbTab & "Backup retention time unit. Can be MINUTES,HOURS,DAYS,WEEKS" & vbCrLf &
+                        "[-BV]" & vbTab & "Backup retention value" & vbCrLf &
+                        "[-RU]" & vbTab & "Report retention time unit. Can be MINUTES,HOURS,DAYS,WEEKS" & vbCrLf &
+                        "[-RV]" & vbTab & "Report retention value" & vbCrLf &
+                        "[-V] " & vbTab & "Verify backup" & vbCrLf &
+                        "[-A] " & vbTab & "Check archive attribute on file before deleting" & vbCrLf &
+                        "[-DS]" & vbTab & "Add the timestamp for files at the start of the filename" & vbCrLf &
+                        "[-TO]" & vbTab & "Query Timeout in minutes (Default:10)" & vbCrLf &
+                        "[-C] " & vbTab & "Continue multiple database operation if one or more fails" & vbCrLf &
                         "[-BF]" & vbTab & "Custom Backup filename format" & vbCrLf
 
     Dim dbquery As String = "select distinct d.name,case when d.database_id < 5 then 1 else 0 end as IsSystem,d.recovery_model " & _
@@ -397,9 +406,10 @@ Module ExpressMaint
         oConn.Open()
 
         'Switched to using TSQL as SMO won't always return all the databases on Express (not started db)
-        Dim oCmd As SqlCommand = New SqlCommand(dbquery)
-        oCmd.CommandType = CommandType.Text
-        oCmd.Connection = oConn
+        Dim oCmd As SqlCommand = New SqlCommand(dbquery) With {
+            .CommandType = CommandType.Text,
+            .Connection = oConn
+        }
         Dim rdr As SqlDataReader
 
         Try
@@ -413,13 +423,13 @@ Module ExpressMaint
                 d("Recovery") = rdr(2)
                 dt.Rows.Add(d)
             End While
-
+            rdr.Close()
         Catch ex As SqlException
             ShowError(ex)
         Catch ex As Exception
             ShowError(ex)
         Finally
-            rdr.Close()
+
             oCmd.Dispose()
             oConn.Close()
             oConn.Dispose()
@@ -1492,6 +1502,8 @@ Module ExpressMaint
             Case "STATS", "STATSFULL"
                 FileFromOptype = "Stats"
                 Exit Select
+            Case Else
+                FileFromOptype = "Unknown"
         End Select
     End Function
 
@@ -1614,6 +1626,7 @@ Module ExpressMaint
         Try
             sw = New StreamWriter(path, True)
             sw.Write(content)
+            sw.Close()
         Catch ex As IOException
             Console.WriteLine(ex.Message)
             Console.Write(ex.StackTrace)
@@ -1631,9 +1644,7 @@ Module ExpressMaint
                 Console.Write(ex.StackTrace)
             End If
         Finally
-            If Not sw Is Nothing Then
-                sw.Close()
-            End If
+
         End Try
     End Sub
 
@@ -1678,21 +1689,23 @@ Module ExpressMaint
         Dim c As SqlConnection = New SqlConnection(conn.ConnectionString)
         c.Open()
 
-        Dim reorgcmd As SqlCommand = New SqlCommand()
-        reorgcmd.Connection = c
-        reorgcmd.CommandType = CommandType.Text
-        reorgcmd.CommandTimeout = (querytimeout * 60)
+        Dim reorgcmd As SqlCommand = New SqlCommand With {
+            .Connection = c,
+            .CommandType = CommandType.Text,
+            .CommandTimeout = (querytimeout * 60)
+        }
 
-        Dim cmd As SqlCommand = New SqlCommand()
-        cmd.Connection = c
-        cmd.CommandType = CommandType.Text
-        cmd.CommandText = "select quotename(s.name) + '.' + quotename(t.name) as TableName,quotename(i.name) as IndexName " & _
-                          "from [" + db + "].sys.indexes i " & _
-                          "join [" + db + "].sys.tables t on i.object_id = t.object_id " & _
-                          "join [" + db + "].sys.schemas s on t.schema_id = s.schema_id " & _
-                          "where i.type in(1,2) and i.allow_page_locks = 1 and i.is_disabled = 0 " & _
-                          "and i.object_id not in (select distinct object_id from [" + db + "].sys.indexes where type = 1 and is_disabled = 1) " & _
+        Dim cmd As SqlCommand = New SqlCommand With {
+            .Connection = c,
+            .CommandType = CommandType.Text,
+            .CommandText = "select quotename(s.name) + '.' + quotename(t.name) as TableName,quotename(i.name) as IndexName " &
+                          "from [" + db + "].sys.indexes i " &
+                          "join [" + db + "].sys.tables t on i.object_id = t.object_id " &
+                          "join [" + db + "].sys.schemas s on t.schema_id = s.schema_id " &
+                          "where i.type in(1,2) and i.allow_page_locks = 1 and i.is_disabled = 0 " &
+                          "and i.object_id not in (select distinct object_id from [" + db + "].sys.indexes where type = 1 and is_disabled = 1) " &
                           "order by TableName,IndexName"
+        }
 
         Dim adp As SqlDataAdapter = New SqlDataAdapter(cmd)
         adp.Fill(ds)

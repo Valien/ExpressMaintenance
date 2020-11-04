@@ -1,0 +1,807 @@
+﻿<html>
+<head>
+    <title>Automating Database maintenance in SQL 2005 Express Edition Part II</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <!-- recovered from WebArchive 2020
+        https://web.archive.org/web/20130313160417/http://www.sqldbatips.com/showarticle.asp?ID=29
+        -->
+    <style>
+        a.m:link, a.m:visited {
+            font-family: verdana;
+            font-size: 8pt;
+            color: #3E6079;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        a.m:hover {
+            font-family: verdana;
+            font-size: 8pt;
+            color: #3E6079;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        a.sw:link, a.sw:visited {
+            font-family: verdana;
+            font-size: 8pt;
+            color: #BE0909;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        a.sw:hover {
+            font-family: verdana;
+            font-size: 8pt;
+            color: #BE0909;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        a.as:link, a.as:visited {
+            font-family: verdana;
+            font-size: 7pt;
+            color: #BE0909;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        a.as:hover {
+            font-family: verdana;
+            font-size: 7pt;
+            color: #BE0909;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        #fm {
+            font-family: verdana;
+            font-size: 8pt;
+            color: #000000;
+            font-weight: normal;
+            text-decoration: none;
+            text-align: justify;
+        }
+
+        #fs {
+            font-family: verdana;
+            font-size: 7pt;
+            color: #000000;
+            font-weight: normal;
+            text-decoration: none;
+        }
+
+        .smen {
+            text-align: right;
+        }
+
+        .ff {
+            font-family: arial;
+            font-size: 7pt;
+            color: #ffffff;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .ft {
+            background-image: url(/web/20130418140809im_/http://www.sqldbatips.com/images/bg1.jpg);
+        }
+
+        .fti {
+            background-color: #89A4B9;
+        }
+
+        .mb {
+            width: 20px;
+            border-left: solid 1px #cccccc;
+        }
+
+        .tmen {
+            background-image: url(/web/20130418140809im_/http://www.sqldbatips.com/images/mbg1.jpg);
+        }
+
+        .rParent {
+            border: solid 1px #3E6079;
+            padding: 0px;
+            background-color: lightgrey;
+        }
+
+        .rHead {
+            font-family: tahoma;
+            font-size: 11px;
+            color: #ffffff;
+            font-weight: bold;
+            background-color: darkslategrey;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .rBody {
+            background-image: url(/web/20130418140809im_/http://www.sqldbatips.com/images/bgk.jpg);
+            text-align: left;
+            vertical-align: middle;
+            padding: 2px;
+            font-family: tahoma;
+            font-size: 11px;
+            color: #000000;
+            font-weight: normal;
+        }
+
+        a.co:link, a.co:visited {
+            font-family: verdana;
+            font-size: 8pt;
+            color: #BE0909;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        a.co:hover {
+            font-family: verdana;
+            font-size: 8pt;
+            color: #BE0909;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        .mmen {
+            text-align: center;
+            border-right: solid 1px #89A4B9;
+        }
+
+        .mmen1 {
+            text-align: center;
+        }
+
+        a.mm:link, a.mm:visited {
+            font-family: arial;
+            font-size: 9pt;
+            font-weight: bold;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        a.mm:hover {
+            font-family: arial;
+            font-size: 9pt;
+            font-weight: bold;
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        a.footer:link, a.footer:visited {
+            font-family: verdana;
+            font-size: 8pt;
+            font-weight: normal;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        a.footer:hover {
+            font-family: verdana;
+            font-size: 8pt;
+            font-weight: normal;
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .foot {
+            background-image: url(/web/20130418140809im_/http://www.sqldbatips.com/images/bg1.jpg);
+            font-family: verdana;
+            font-size: 8pt;
+            font-weight: normal;
+            color: #ffffff;
+        }
+
+        .searchtype {
+            font-family: verdana;
+            font-size: 8pt;
+            color: #000000;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        h2.search {
+            font-family: verdana;
+            color: #BE0909;
+        }
+
+        .stdtext {
+            padding: 2px;
+            font-family: tahoma;
+            font-size: 11px;
+            color: #000000;
+            font-weight: normal;
+        }
+
+        li.std {
+            padding: 2px;
+            font-family: tahoma;
+            font-size: 11px;
+            color: #000000;
+            font-weight: normal;
+        }
+
+        .btext {
+            padding: 2px;
+            font-family: tahoma;
+            font-size: 11px;
+            color: #3e6079;
+            font-weight: bold;
+        }
+
+        .articleheader {
+            padding: 2px;
+            font-family: tahoma;
+            font-size: 16px;
+            color: #3e6079;
+            font-weight: bold;
+        }
+
+        .codesample {
+            padding: 2px;
+            font-family: courier;
+            font-size: unset;
+            color: #000066;
+            font-weight: normal;
+        }
+
+        .stdheader {
+            padding: 2px;
+            font-family: tahoma;
+            font-size: 15px;
+            color: #000000;
+            font-weight: bold;
+        }
+
+        .rParentkb {
+            border: solid 1px #3E6079;
+            padding: 0px;
+            background-image: url(/web/20130418140809im_/http://www.sqldbatips.com/images/bgk.jpg);
+        }
+
+        body {
+            background-color: #ffffff;
+        }
+
+        a.article:link, a.article:visited {
+            font-family: tahoma;
+            font-size: 11px;
+            color: #BE0909;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        a.article:hover {
+            font-family: tahoma;
+            font-size: 11px;
+            color: #BE0909;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        .tmen {
+            background-image: url(/web/20130418140809im_/http://www.sqldbatips.com/images/mbg1.jpg);
+        }
+
+        a.s:link, a.s:visited {
+            font-family: arial;
+            color: #ffffff;
+            font-size: 9pt;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        a.s:hover {
+            font-family: arial;
+            color: #ffffff;
+            font-size: 9pt;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        /*
+             FILE ARCHIVED ON 14:08:09 Apr 18, 2013 AND RETRIEVED FROM THE
+             INTERNET ARCHIVE ON 01:10:07 Nov 04, 2020.
+             JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+             ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+             SECTION 108(a)(3)).
+        */
+        /*
+        playback timings (ms):
+          load_resource: 231.136
+          CDXLines.iter: 19.806 (3)
+          captures_list: 1213.831
+          LoadShardBlock: 1187.281 (3)
+          exclusion.robots: 0.201
+          PetaboxLoader3.datanode: 716.845 (4)
+          exclusion.robots.policy: 0.188
+          PetaboxLoader3.resolve: 660.581 (2)
+          esindex: 0.014
+          RedisCDXSource: 2.312
+        */
+    </style>
+</head>
+<body>
+    <p align="center">
+        <table height="48" width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr height="40">
+                <td width="250" background="/web/20130313160417im_/http://www.sqldbatips.com/images/bg1.jpg" align="center" valign="middle"><a href="/web/20130313160417/http://www.sqldbatips.com/default.asp"><img border="0" src="/web/20130313160417im_/http://www.sqldbatips.com/images/lbg.jpg"></a></td>
+                <td background="/web/20130313160417im_/http://www.sqldbatips.com/images/bg1.jpg">&nbsp;</td>
+                <td width="400" align="right" valign="middle" background="/web/20130313160417im_/http://www.sqldbatips.com/images/bg1.jpg">
+                    <a href="/web/20130313160417/http://www.sqldbatips.com/default.asp" target="_self" class="s">home</a><img src="/web/20130313160417im_/http://www.sqldbatips.com/images/dot.jpg">
+                    <a href="/web/20130313160417/http://www.sqldbatips.com/articles.asp?Versions=0" target="_self" class="s">articles</a><img src="/web/20130313160417im_/http://www.sqldbatips.com/images/dot.jpg">
+                    <a href="/web/20130313160417/http://www.sqldbatips.com/news.asp" target="_self" class="s">news</a><img src="/web/20130313160417im_/http://www.sqldbatips.com/images/dot.jpg">
+                    <a href="/web/20130313160417/http://www.sqldbatips.com/code.asp" target="_self" class="s">code</a><img src="/web/20130313160417im_/http://www.sqldbatips.com/images/dot.jpg">
+                    <a href="https://web.archive.org/web/20130313160417/http://sqlblogcasts.com/blogs/sqldbatips" target="_blank" class="s">blog</a><img src="/web/20130313160417im_/http://www.sqldbatips.com/images/dot.jpg">
+                    <a href="/web/20130313160417/http://www.sqldbatips.com/links.asp" target="_self" class="s">links</a><img src="/web/20130313160417im_/http://www.sqldbatips.com/images/dot.jpg">
+                    <a href="/web/20130313160417/http://www.sqldbatips.com/search.asp" target="_self" class="s">search</a>&nbsp;&nbsp;
+                </td>
+            </tr>
+            <tr height="8">
+                <td colspan="4" class="tmen"><font size="-4">&nbsp;</font></td>
+            </tr>
+        </table>
+
+        <table width="100%" border="0" cellspacing="2" cellpadding="1">
+            <tr>
+                <td height="2" width="2%">&nbsp;</td>
+                <td width="15%">&nbsp;</td>
+                <td width="2%">&nbsp;</td>
+                <td width="70%">&nbsp;</td>
+                <td width="11%">&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td align="left" valign="top">
+                    <!-- left hand content -->
+                    <a href="/web/20130313160417/http://www.sqldbatips.com/code.asp"><img alt="Code Samples" src="/web/20130313160417im_/http://www.sqldbatips.com/images/codel.jpg" border="0"></a><br /><br />
+                    <a href="/web/20130313160417/http://www.sqldbatips.com/articles.asp?Versions=0"><img alt="Articles and Presentations" src="/web/20130313160417im_/http://www.sqldbatips.com/images/artil.gif" border="0"></a><br /><br />
+                    <a href="https://web.archive.org/web/20130313160417/http://sqlblogcasts.com/blogs/sqldbatips"><img alt="sqldbatips.com blog" src="/web/20130313160417im_/http://www.sqldbatips.com/images/forl.jpg" border="0"></a><br /><br />
+
+                </td>
+                <td align="left" valign="top">&nbsp;</td>
+                <td align="left" valign="top">
+                    <!-- main content -->
+                    <table width="100%" class="rParent">
+                        <tr>
+                            <td height="20" class="rHead">Automating Database maintenance in SQL 2005+ Express Edition Part II</td>
+                        </tr>
+                    </table>
+                    <br />
+                    <table class="rParent" width="100%" border="0" cellspacing="2" cellpadding="2">
+                        <tr>
+                            <td class="btext" width="11%">Author</td>
+                            <td class="stdtext" width="41%">Jasper Smith</td>
+                            <td class="btext" width="12%">Hits</td>
+                            <td class="stdtext" width="36%">31647</td>
+                        </tr>
+                    </table>
+            </tr>
+            <tr>
+                <td class="btext">Create Date</td>
+                <td class="stdtext">18-08-2004</td>
+                <td class="btext">Last Updated</td>
+                <td class="stdtext">Apr-2008</td>
+            </tr>
+            <tr>
+                <td class="btext">Versions</td>
+                <td class="stdtext">SQL2005, SQL2008, SQLX2017</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
+    <p class="articleheader">Overview</p>
+    <p align="justify" class="stdtext">
+        In this series of articles, I'll demonstrate
+        a couple of different approaches to writing a maintenance utility that mimics
+        some of the behavior of the <a href="https://web.archive.org/web/20130313160417/http://msdn.microsoft.com/library/default.asp?url=/library/en-us/coprompt/cp_sqlmaint_19ix.asp?frame=true" target="_blank" class="co">
+            sqlmaint
+            utility
+        </a> that
+        is included with SQL Server 2000. SQL Server  Express Editions do not
+        include such a utility so these
+        articles will show how we can easily create one ourselves using either TSQL
+        or SMO (SQL Management Objects - the successor of SQL-DMO). Rather than
+        dive into the code,
+        these articles will demonstrate how to use these utilities for backing up and
+        maintaining your databases and how to schedule these tasks
+        using the Scheduled Tasks facility in Windows XP and Windows 2003.
+    </p>
+    <p align="justify" class="stdtext">
+        In this
+        article we will concentrate on the SMO version of the utility which is in
+        the form of a standalone console application - <a href="/web/20130313160417/http://www.sqldbatips.com/samples/code/ExpressMaint.zip" class="co">ExpressMaint.</a>  To vew articles on performing maintenance operations using SMO including sample code see the <a href="#related" class="co">Related Articles</a> section at the bottom of the page. You can grab the sourcecode for the ExpressMaint utility from the related <a href="https://web.archive.org/web/20130313160417/http://www.codeplex.com/ExpressMaint" target="_blank" class="co">ExpressMaint Project Codeplex site</a>.
+    </p>
+    <p class="articleheader">ExpressMaint Utility</p>
+    <p align="justify" class="stdtext">
+        <a href="/web/20130313160417/http://www.sqldbatips.com/samples/code/ExpressMaint.zip" class="co">Click here to Download the ExpressMaint utility for SQL 2005</a><br><br>
+        <a href="/web/20130313160417/http://www.sqldbatips.com/samples/code/ExpressMaint2008.zip" class="co">Click here to Download the ExpressMaint utility for SQL 2008</a>
+        <br><br>
+        <a href="https://web.archive.org/web/20130313160417/http://www.codeplex.com/ExpressMaint" class="co" target="_blank">Click here to Download the ExpressMaint source code from Codeplex</a>
+        <br><br>The ExpressMaint utility supports the following operations
+    </p>
+    <ul>
+        <li class="std"> Full Database Backup</li>
+        <li class="std">Differential Database Backup</li>
+        <li class="std">Log Backup</li>
+        <li class="std">Housekeeping of backup files</li>
+        <li class="std">Database Integrity Checks</li>
+        <li class="std">Database Index Rebuilds</li>
+        <li class="std">Database Index Reorganization</li>
+        <li class="std">Database Statistics Update </li>
+        <li class="std">Report Creation</li>
+    </ul>
+    <p class="btext">
+        Please note that double quotes are required around any command
+        line arguments that include spaces. All switches are case sensitive. For switches
+        that take
+        an argument, there should be a space between the switch and the argument. The
+        argument column in the table below indicates whether a switch takes an argument
+        or not.
+    </p>
+    <table class="rParent" width="100%" cellspacing="2" cellpadding="2">
+        <tr align="center" valign="middle" class="rHead">
+            <td width="55" align="center" valign="middle">Switch</td>
+            <td width="57" align="center" valign="middle"><div align="center">Argument</div></td>
+            <td width="51" align="center" valign="middle"><div align="center">Required</div></td>
+            <td width="568">Description</td>
+        </tr>
+        <tr class="stdtext">
+            <td align="center" valign="middle"><strong>-?</strong></td>
+            <td align="center" valign="middle"><div align="center">N</div></td>
+            <td align="center" valign="middle"><div align="center">N</div></td>
+            <td align="left" valign="middle">Displays help for the ExpressMaint utility</td>
+        </tr>
+        <tr class="stdtext">
+            <td align="center" valign="middle"><strong>-S</strong></td>
+            <td align="center" valign="middle"><div align="center">Y</div></td>
+            <td align="center" valign="middle"><div align="center">Y</div></td>
+            <td align="left" valign="middle">
+                The SQL Server for ExpressMaint to connect
+                to
+            </td>
+        </tr>
+        <tr class="stdtext">
+            <td align="center" valign="middle"><strong>-U</strong></td>
+            <td align="center" valign="middle">Y</td>
+            <td align="center" valign="middle">N</td>
+            <td align="left" valign="middle">SQL Authentication Login. If not specified a trusted windows connection is used. If specified a non blank password must be supplied </td>
+        </tr>
+        <tr class="stdtext">
+            <td align="center" valign="middle"><strong>-P</strong></td>
+            <td align="center" valign="middle">Y</td>
+            <td align="center" valign="middle">N</td>
+            <td align="left" valign="middle">SQL Authentication Password</td>
+        </tr>
+        <tr class="stdtext">
+            <td width="55" align="center" valign="middle"><strong>-D</strong></td>
+            <td width="57" align="center" valign="middle"><div align="center">Y</div></td>
+            <td width="51" align="center" valign="middle"><div align="center">Y</div></td>
+            <td align="left" valign="middle">
+                <div align="justify">
+                    The target database
+                    for the maintenance operation. Valid values are a single database name,
+                    ALL_USER which will
+                    process all user databases, ALL_SYSTEM which will process all system
+                    databases and ALL which will process all databases
+                </div>
+            </td>
+        </tr>
+        <tr class="stdtext">
+            <td width="55" align="center" valign="middle"><strong>-T</strong></td>
+            <td width="57" align="center" valign="middle"><div align="center">Y</div></td>
+            <td width="51" align="center" valign="middle"><div align="center">Y</div></td>
+            <td align="left" valign="middle">
+                <p align="justify">
+                    The type of maintenance
+                    operation to be performed. Valid values are
+                </p>
+                <div align="justify">
+                    <ul>
+                        <li> DB - Full Database Backup</li>
+                        <li>DIF - Differential Database Backup</li>
+                        <li>LOG - Log Backup</li>
+                        <li>CHECKDB - Database Integrity Check</li>
+                        <li>REINDEX - Rebuild all indexes</li>
+                        <li>REORG - Reorganize all indexes</li>
+                        <li>STATS - Update all statistics using default sampling</li>
+                        <li>
+                            STATSFULL - update all statics with fullscan<br>
+                        </li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        <tr class="stdtext">
+            <td width="55" align="center" valign="middle"><strong>-B</strong></td>
+            <td width="57" align="center" valign="middle"><div align="center">Y</div></td>
+            <td width="51" align="center" valign="middle"><div align="center">N</div></td>
+            <td align="left" valign="middle">
+                <div align="justify">
+                    The base folder to
+                    write the backups to. Sub folders will be created for each database
+                </div>
+            </td>
+        </tr>
+        <tr class="stdtext">
+            <td width="55" height="17" align="center" valign="middle"><strong>-V</strong></td>
+            <td width="57" align="center" valign="middle"><div align="center">N</div></td>
+            <td width="51" align="center" valign="middle"><div align="center">N</div></td>
+            <td align="left" valign="middle">
+                <div align="justify">
+                    Indicates whether to
+                    verify the backup file
+                </div>
+            </td>
+        </tr>
+        <tr class="stdtext">
+            <td width="55" align="center" valign="middle"><strong>-BU</strong></td>
+            <td width="57" align="center" valign="middle"><div align="center">Y</div></td>
+            <td width="51" align="center" valign="middle"><div align="center">N</div></td>
+            <td align="left" valign="middle">
+                <div align="justify">
+                    The unit of measure
+                    for the -BV argument. Valid values are minutes, hours, days, weeks. The
+                    combination of these two arguments determines for how long old backup
+                    files are kept. Required if -B argument is specified.
+                </div>
+            </td>
+        </tr>
+        <tr class="stdtext">
+            <td width="55" align="center" valign="middle"><strong>-BV</strong></td>
+            <td width="57" align="center" valign="middle"><div align="center">Y</div></td>
+            <td width="51" align="center" valign="middle"><div align="center">N</div></td>
+            <td align="left" valign="middle">
+                <div align="justify">
+                    The time period of
+                    old backups to keep. Required if -B argument is specified.
+                </div>
+            </td>
+        </tr>
+        <tr class="stdtext">
+            <td width="55" align="center" valign="middle" style="height: 23px"><strong>-R</strong></td>
+            <td width="57" align="center" valign="middle" style="height: 23px"><div align="center">Y</div></td>
+            <td width="51" align="center" valign="middle" style="height: 23px"><div align="center">N</div></td>
+            <td align="left" valign="middle" style="height: 23px">
+                <div align="justify">
+                    The folder where maintenance reports are
+                    written to
+                </div>
+            </td>
+        </tr>
+        <tr class="stdtext">
+            <td width="55" align="center" valign="middle"><strong>-RU</strong></td>
+            <td width="57" align="center" valign="middle"><div align="center">Y</div></td>
+            <td width="51" align="center" valign="middle"><div align="center">N</div></td>
+            <td align="left" valign="middle">
+                <div align="justify">
+                    The unit of measure
+                    for the -RV argument. Valid values are minutes, hours, days, weeks. The
+                    combination of these two parameters determines for how long
+                    old reports are kept. Required if -R argument is specified.
+                </div>
+            </td>
+        </tr>
+        <tr class="stdtext">
+            <td width="55" align="center" valign="middle"><strong>-RV</strong></td>
+            <td width="57" align="center" valign="middle"><div align="center">Y</div></td>
+            <td width="51" align="center" valign="middle"><div align="center">N</div></td>
+            <td align="left" valign="middle">
+                <div align="justify">
+                    The time period or
+                    number of copies of old reports to keep. Required if -R argument is specified.
+                </div>
+            </td>
+        </tr>
+        <tr class="stdtext">
+            <td align="center" valign="middle"><strong>-A</strong></td>
+            <td align="center" valign="middle"><div align="center">N</div></td>
+            <td align="center" valign="middle"><div align="center">N</div></td>
+            <td align="left" valign="middle"><div align="justify">Indicates whether to check the archive bit on a backup file before deleting it. This is a safety check to prevent deletion of files that have not been backed up onto tape.</div></td>
+        </tr>
+        <tr class="stdtext">
+            <td width="55" align="center" valign="middle"><strong>-DS</strong></td>
+            <td width="57" align="center" valign="middle"><div align="center">N</div></td>
+            <td width="51" align="center" valign="middle"><div align="center">N</div></td>
+            <td align="left" valign="middle"><div align="justify">If this switch is specified then the timestamp for backup and report files is appended to the front of the filename (the default is to append to the end of the filename) </div></td>
+        </tr>
+        <tr class="stdtext">
+            <td align="center" valign="middle"><strong>-TO</strong></td>
+            <td align="center" valign="middle"><div align="center">Y</div></td>
+            <td align="center" valign="middle"><div align="center">N</div></td>
+            <td align="left" valign="middle"><div align="justify">This switch allows the setting of a statement timeout specified in minutes (e.g. -TO 10). If not specified, the default is 10 minutes. </div></td>
+        </tr>
+        <tr class="stdtext">
+            <td align="center" valign="middle"><strong>-C</strong></td>
+            <td align="center" valign="middle">N</td>
+            <td align="center" valign="middle">N</td>
+            <td align="left" valign="middle">This switch allows  multi database maintenance operations (ALL,ALL_USER,ALL_SYSTEM) to continue if an error is encountered with one or more databases</td>
+        </tr>
+        <tr class="stdtext">
+            <td align="center" valign="middle"><strong>-BF</strong></td>
+            <td align="center" valign="middle">Y</td>
+            <td align="center" valign="middle">N</td>
+            <td align="left" valign="middle">This switch allows specifying custom backup filename formats. Accepted tokens are $(DB) for database name, $(DATE) for current date, $(TIME) for current time and $(OPTYPE) for backup type </td>
+        </tr>
+    </table>
+    <p class="articleheader">Example Syntax</p>
+    <p class="btext">
+        Note that the entire command should be on one line even though
+        some examples span multiple lines for formatting purposes
+    </p>
+    <p align="justify" class="stdtext">
+        <span class="btext">
+            1) Full Database Backup of all user databases
+            to c:\backups, verify the backups and report to c:\reports keeping  backups
+            for 1 day
+            and reports for 1 week and continue processing other databases if an error is encountered baking up a database
+        </span>
+    </p>
+    <table class="rParent" width="100%">
+        <tr>
+            <td>
+                <pre class="codesample">expressmaint -S (local)\SQLExpress -D ALL_USER -T DB -R c:\reports 
+	-RU WEEKS -RV 1 -B c:\backups -BU DAYS -BV 1 -V -C</pre>
+            </td>
+        </tr>
+    </table>
+    <p align="justify" class="stdtext">
+        <span class="btext">
+            2) Full Database Backup
+            of all system databases to c:\backups, verify the backups and report to c:\reports
+            keeping backups
+            for 1 week and reports for 1 week
+        </span>
+    </p>
+    <table class="rParent" width="100%">
+        <tr>
+            <td>
+                <pre class="codesample">expressmaint -S (local)\SQLExpress -D ALL_SYSTEM -T DB -R c:\reports 
+	-RU WEEKS -RV 1 -B c:\backups -BU DAYS -BV 1 -V</pre>
+            </td>
+        </tr>
+    </table>
+    <p align="justify" class="stdtext">
+        <span class="btext">
+            3) Log Backup of all user
+            databases to c:\backups, don't verify the backups and report to c:\reports
+            keeping backups
+            for 1 day and reports for 1 day
+        </span>
+    </p>
+    <table class="rParent" width="100%">
+        <tr>
+            <td>
+                <pre class="codesample">expressmaint -S (local)\SQLExpress -D ALL_USER -T LOG -R c:\reports 
+	-RU DAYS -RV 1 -B c:\backups -BU DAYS -BV 1</pre>
+            </td>
+        </tr>
+    </table>
+    <p align="justify" class="stdtext">
+        <span class="btext">
+            4) Check the integrity
+            of the AdventureWorks database and report to c:\reports keeping reports for
+            1 week
+        </span>
+    </p>
+    <table class="rParent" width="100%">
+        <tr>
+            <td>
+                <pre class="codesample">expressmaint -S (local)\SQLExpress -D AdventureWorks -T CHECKDB 
+	-R c:\reports -RU WEEKS -RV 1</pre>
+            </td>
+        </tr>
+    </table>
+    <p align="justify" class="stdtext">
+        <span class="btext">
+            5) Rebuild all indexes
+            in
+            the AdventureWorks database and report to c:\reports keeping reports for
+            1 day
+        </span>
+    </p>
+    <table class="rParent" width="100%">
+        <tr>
+            <td>
+                <pre class="codesample">expressmaint -S (local)\SQLExpress -D AdventureWorks -T REINDEX 
+	-R c:\reports -RU DAYS -RV 1</pre>
+            </td>
+        </tr>
+    </table>
+    <p align="justify" class="stdtext">
+        <span class="btext">
+            6) Update all statistics with fullscan
+            in
+            the AdventureWorks database and report to c:\reports keeping reports for
+            1 day
+        </span>
+    </p>
+    <table class="rParent" width="100%">
+        <tr>
+            <td>
+                <pre class="codesample">expressmaint -S (local)\SQLExpress -D AdventureWorks -T STATSFULL 
+	-R c:\reports -RU DAYS -RV 1</pre>
+            </td>
+        </tr>
+    </table>
+    <p align="justify" class="stdtext"><span class="btext">7) A Full Backup of the AdventureWorks database specifiying a custom backup format to achieve a filename like AdventureWorks_foo_20091107.bak</span></p>
+    <table class="rParent" width="100%">
+        <tr>
+            <td>
+                <pre class="codesample">expressmaint -S (local)\SQLExpress -D AdventureWorks -T DB
+	-R c:\reports -RU DAYS -RV 1 -B c:\backups -BU DAYS -BV 1
+	-BF $(DB)_foo_$(DATE)</pre>
+            </td>
+        </tr>
+    </table>
+    <p align="justify" class="articleheader">Automating backups using ExpressMaint</p>
+    <p align="justify" class="stdtext">
+        Since SQL Server 2005 Express Edition does
+        not include SQL Agent, we need to rely on the Windows Task Scheduler to run
+        our maintenance
+        tasks. If you are not familiar with how to set up a scheduled task, it's worth
+        reviewing the Microsoft Knowledge Base article below
+    </p>
+    <p class="stdtext"><a href="https://web.archive.org/web/20130313160417/http://support.microsoft.com/default.aspx?scid=kb;en-us;308569&amp;sd=tech" target="_blank" class="co">How to Schedule Tasks in Windows XP</a></p>
+    <ul>
+        <li class="std">Double-click Add Scheduled Task to start the Scheduled Task Wizard, and then click Next in the first dialog box</li>
+        <li class="std">
+            Click Browse, browse to Expressmaint.exe, and then click
+            Open.
+        </li>
+        <li class="std">Type a name for the task e.g DAILY FULL BACKUP and then choose Daily from the scheduling options</li>
+        <li class="std">
+            Click Next, specify the information about the  time to run the
+            task e.g. 00:00, and then click Next
+        </li>
+        <li class="std">Type the name and password of the account that will execute this task. Make sure that you choose an account that is a syadmin for your instance</li>
+        <li class="std">
+            Click Next, select the checkbox to Open the Advanced Properties
+            for this task and then click Finish
+        </li>
+        <li class="std">
+            In the Run text box append the arguments you want to pass to
+            the ExpressMaint utility.(You must leave a space after the existing contents)
+        </li>
+        <li class="std">Click OK. If prompted, supply the password for the account again</li>
+    </ul>
+    <p align="justify" class="stdtext">
+        To supply feedback on this article
+        and the ExpressMaint utility or to report bugs/issues email <a href="https://web.archive.org/web/20130313160417/mailto:jas@sqldbatips.com&amp;Subject=Feeback%20for%20Expressmaint" class="co">jas@sqldbatips.com</a>
+    </p>
+    <p align="justify" class="articleheader"><a name="related"></a>Related Articles</p>
+    &nbsp;<img src="/web/20130313160417im_/http://www.sqldbatips.com/images/bullet.jpg">&nbsp;&nbsp;<a href="/web/20130313160417/http://www.sqldbatips.com/showarticle.asp?ID=27" class="co">Automating Database maintenance in SQL 2005 Express Edition Part I</a><br />
+    &nbsp;<img src="/web/20130313160417im_/http://www.sqldbatips.com/images/bullet.jpg">&nbsp;&nbsp;<a href="/web/20130313160417/http://www.sqldbatips.com/showarticle.asp?ID=40" class="co">Getting Started with SMO in SQL 2005 - Restores</a><br />
+    &nbsp;<img src="/web/20130313160417im_/http://www.sqldbatips.com/images/bullet.jpg">&nbsp;&nbsp;<a href="/web/20130313160417/http://www.sqldbatips.com/showarticle.asp?ID=42" class="co">Getting Started with SMO in SQL 2005 - Integrity Checks</a><br />
+    &nbsp;<img src="/web/20130313160417im_/http://www.sqldbatips.com/images/bullet.jpg">&nbsp;&nbsp;<a href="/web/20130313160417/http://www.sqldbatips.com/showarticle.asp?ID=37" class="co">Getting Started with SMO in SQL 2005 - Backups</a><br />
+    &nbsp;<img src="/web/20130313160417im_/http://www.sqldbatips.com/images/bullet.jpg">&nbsp;&nbsp;<a href="/web/20130313160417/http://www.sqldbatips.com/showarticle.asp?ID=41" class="co">Getting Started with SMO in SQL 2005 - Verifying Backups</a><br />
+    &nbsp;<img src="/web/20130313160417im_/http://www.sqldbatips.com/images/bullet.jpg">&nbsp;&nbsp;<a href="/web/20130313160417/http://www.sqldbatips.com/showarticle.asp?ID=45" class="co">SM0 2005 - Populating a list of SQL Servers</a><br />
+    &nbsp;<img src="/web/20130313160417im_/http://www.sqldbatips.com/images/bullet.jpg">&nbsp;&nbsp;<a href="/web/20130313160417/http://www.sqldbatips.com/showarticle.asp?ID=34" class="co">GettingStarted with SMO in SQL 2005</a><br />
+    <br />
+    <table border="0" width="100%" cellspacing="2" cellpadding="2">
+        <tr>
+            <td width="33%" valign="middle" align="left">
+                <a onmouseout="window.status=''; return true" href="/web/20130313160417/http://www.sqldbatips.com/print.asp?ID=29" target="_blank" onmouseover="window.status='Print this page'; return true"><img align="middle" alt="Print this page" border="0" src="/web/20130313160417im_/http://www.sqldbatips.com/images/print.gif" /></a>&nbsp;
+                <a onmouseout="window.status=''; return true" href="/web/20130313160417/http://www.sqldbatips.com/print.asp?ID=29" target="_blank" class="co" onmouseover="window.status='Print this page'; return true">Print this page</a>
+            </td>
+            <td width="33%" valign="middle" align="left">
+                <a onmouseout="window.status=''; return true" onmouseover="window.status='Email this article'; return true" href="https://web.archive.org/web/20130313160417/mailto:/?Subject=Check%20out%20this%20article%20from%20sqldbatips.com&amp;Body=Automating%20Database%20maintenance%20in%20SQL%202005%20Express%20Edition%20Part%20II%0D%0Ahttp%3A//www.sqldbatips.com/showarticle.asp%3FID%3D29%0D%0A"><img align="middle" alt="Email this article" border="0" src="/web/20130313160417im_/http://www.sqldbatips.com/images/email.gif" /></a>&nbsp;
+                <a onmouseout="window.status=''; return true" onmouseover="window.status='Email this article'; return true" href="https://web.archive.org/web/20130313160417/mailto:/?Subject=Check%20out%20this%20article%20from%20sqldbatips.com&amp;Body=Automating%20Database%20maintenance%20in%20SQL%202005%20Express%20Edition%20Part%20II%0D%0Ahttp%3A//www.sqldbatips.com/showarticle.asp%3FID%3D29%0D%0A" class="co">Email this article</a>
+            </td>
+            <td width="33%" valign="middle" align="left">
+                <a onmouseout="window.status=''; return true" onmouseover="window.status='Add to Favourites'; return true" href="javascript:AddToFav()"><img align="middle" alt="Add to Favourites" border="0" src="/web/20130313160417im_/http://www.sqldbatips.com/images/fav.gif" /></a>&nbsp;
+                <a onmouseout="window.status=''; return true" onmouseover="window.status='Add to Favourites'; return true" href="javascript:AddToFav()" class="co">Add to Favourites</a>
+            </td>
+        </tr>
+    </table>
+
+    <table cellpadding="0" cellspacing="0" width="100%" height="15" border="0">
+        <tr height="15">
+            <td class="foot">&copy; Copyright sqldbatips Ltd 2008. Contact <a href="https://web.archive.org/web/20130313160417/mailto:admin@sqldbatips.com" class="footer">webmaster</a></td>
+            <td colspan="2" align="right" class="foot">
+                <a href="/web/20130313160417/http://www.sqldbatips.com/default.asp" class="footer">home</a>&nbsp;|&nbsp;<a href="/web/20130313160417/http://www.sqldbatips.com/news.asp" class="footer">news</a>&nbsp;|&nbsp;<a href="/web/20130313160417/http://www.sqldbatips.com/articles.asp?Versions=0" class="footer">articles</a>&nbsp;|&nbsp;<a href="/web/20130313160417/http://www.sqldbatips.com/code.asp" class="footer">code</a>&nbsp;|&nbsp;<a href="https://web.archive.org/web/20130313160417/http://sqlblogcasts.com/blogs/sqldbatips" class="footer">blog</a>&nbsp;|&nbsp;<a href="/web/20130313160417/http://www.sqldbatips.com/links.asp" class="footer">links</a>&nbsp;|&nbsp;<a href="/web/20130313160417/http://www.sqldbatips.com/search.asp" class="footer">search</a>&nbsp;&nbsp;
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
